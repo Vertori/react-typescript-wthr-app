@@ -6,7 +6,9 @@ import { optionType } from "./types";
 function App(): JSX.Element {
   const [term, setTerm] = useState<string>("");
   const [options, setOptions] = useState<[]>([]);
+  const [city, setCity] = useState<optionType | null>(null);
 
+  // fetch city names
   const getSearchOptions = async (value: string) => {
     await axios
       .get(
@@ -17,6 +19,7 @@ function App(): JSX.Element {
       .then((response) => setOptions(response.data));
   };
 
+  // handle changing value of input
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim();
     setTerm(value);
@@ -24,9 +27,34 @@ function App(): JSX.Element {
     getSearchOptions(value);
   };
 
-  const handleOptionSelect = (option: optionType) => {
-    console.log(option.name);
+  // fetch weather forecast
+  const getForecast = (city: optionType) => {
+    axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${
+          city.lon
+        }&units=metric&appid=${import.meta.env.VITE_API_KEY}`
+      )
+      .then((response) => console.log(response));
   };
+
+  // handle clicked city option
+  const handleOptionSelect = (option: optionType) => {
+    setCity(option);
+  };
+
+  // search button onclick
+  const handleSubmit = () => {
+    if (!city) return;
+    getForecast(city);
+  };
+
+  useEffect(() => {
+    if (city) {
+      setTerm(city.name);
+      setOptions([]);
+    }
+  }, [city]);
 
   return (
     <main className="flex justify-center items-center h-[100vh] w-full bg-gradient-to-br from-sky-400 via-rose-400 to-lime-400">
@@ -56,7 +84,10 @@ function App(): JSX.Element {
               </li>
             ))}
           </ul>
-          <button className="rounded-r-md border-2 border-zinc-100 hover:border-zinc-500 hover:text-zinc-500 text-zinc-100 px-2 py-1 cursor-pointer">
+          <button
+            className="rounded-r-md border-2 border-zinc-100 hover:border-zinc-500 hover:text-zinc-500 text-zinc-100 px-2 py-1 cursor-pointer"
+            onClick={handleSubmit}
+          >
             Search
           </button>
         </div>
