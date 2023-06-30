@@ -1,4 +1,5 @@
 import "./App.css";
+import Forecast from "./components/Forecast";
 import Search from "./components/Search";
 import useForecast from "./hooks/useForecast";
 
@@ -13,9 +14,9 @@ function App(): JSX.Element {
   } = useForecast();
 
   return (
-    <main className="flex justify-center items-center h-[100vh] w-full bg-gradient-to-br from-sky-400 via-rose-400 to-lime-400">
+    <main className="flex justify-center items-center min-h-[100vh] w-full bg-gradient-to-br from-sky-400 via-rose-400 to-lime-400">
       {forecast ? (
-        "This is the forecast"
+        <Forecast data={forecast} />
       ) : (
         <Search
           term={term}
