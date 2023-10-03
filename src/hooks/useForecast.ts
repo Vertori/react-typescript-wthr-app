@@ -10,13 +10,16 @@ const useForecast = () => {
 
   // fetch city names
   const getSearchOptions = async (value: string) => {
-    await axios
-      .get(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${value.trim()}&limit=5&appid=${
+    try {
+      const response = await axios.get(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${value.trim()}&limit=5&appid=${
           import.meta.env.VITE_API_KEY
         }`
-      )
-      .then((response) => setOptions(response.data));
+      );
+      setOptions(response.data);
+    } catch (error) {
+      console.log("Some error occured:", error);
+    }
   };
 
   // handle changing value of input
